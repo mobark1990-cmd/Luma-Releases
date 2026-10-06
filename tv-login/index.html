@@ -25,6 +25,10 @@
   <h1>Luma</h1>
   <p>وافق على تسجيل دخول التلفزيون بحسابك.</p>
   <div class="code" id="code">—</div>
+  <section id="enter" class="hidden">
+    <label for="manual">الرمز الظاهر على التلفزيون</label>
+    <input id="manual" placeholder="K93-GX3" autocapitalize="characters" autocomplete="off">
+  </section>
 
   <section id="auth">
     <label for="email">البريد الإلكتروني</label>
@@ -49,11 +53,11 @@
 const SUPABASE_URL = "https://hcjbnmheonbfllkdhrph.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8METCoHofX0o6ddhExRjDA_EX5LXfes";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-const code = (new URLSearchParams(location.search).get("code") || "").trim();
+let code = (new URLSearchParams(location.search).get("code") || "").trim();
 const $ = (id) => document.getElementById(id);
 const say = (text, cls) => { $("msg").textContent = text; $("msg").className = "msg " + (cls || ""); };
 $("code").textContent = code || "—";
-if (!code) say("الرابط ناقص: لا يوجد رمز. امسح الباركود من التلفزيون مرة أخرى.", "err");
+if (!code) { $("code").classList.add("hidden"); $("enter").classList.remove("hidden"); }
 
 async function render() {
   const { data: { session } } = await sb.auth.getSession();
@@ -82,8 +86,9 @@ $("signup").onclick = () => withBusy($("signup"), async () => {
 });
 
 $("approveBtn").onclick = () => withBusy($("approveBtn"), async () => {
-  if (!code) throw new Error("لا يوجد رمز في الرابط.");
-  const { data, error } = await sb.rpc("approve_tv_login_session", { p_code: code });
+  const c = code || $("manual").value.trim();
+  if (!c) throw new Error("اكتب الرمز الظاهر على التلفزيون.");
+  const { data, error } = await sb.rpc("approve_device_login_session", { p_code: c });
   if (error) throw error;
   const row = Array.isArray(data) ? data[0] : data;
   if (row && row.success) say("تمت الموافقة. التلفزيون سيسجّل دخوله خلال ثوانٍ.", "ok");
