@@ -1,0 +1,9 @@
+<svg width="860" height="250" viewBox="0 0 860 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="860" height="250" rx="44" fill="#080910"/>
+  <path d="M52 182C72 122 118 76 181 40C196 31 216 43 216 60V180C216 198 196 209 181 201C146 180 106 174 52 182Z" fill="#7C3AED"/>
+  <path d="M198 62C221 77 239 99 250 128C239 158 221 180 198 194V62Z" fill="#22D3EE"/>
+  <path d="M94 70H126V168H198V200H94V70Z" fill="white"/>
+  <path d="M142 94L198 128L142 162V94Z" fill="white" fill-opacity="0.88"/>
+  <text x="304" y="164" font-family="Inter, Manrope, Arial, sans-serif" font-size="96" font-weight="800" fill="white">Luma</text>
+  <text x="310" y="204" font-family="Inter, Manrope, Arial, sans-serif" font-size="24" font-weight="500" fill="#A8B3CF">Independent media app</text>
+</svg>

@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/luma_wordmark.svg" alt="Luma" width="430" /></p>
+
 # Luma Releases
 
 ملفات تثبيت تطبيق **Luma** لأجهزة Android TV والجوالات.
