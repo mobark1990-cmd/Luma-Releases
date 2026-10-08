@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Luma · ربط جهاز</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20width%3D%22512%22%20height%3D%22512%22%20viewBox%3D%220%200%20512%20512%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%20%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23080910%22/%3E%20%3Cpath%20d%3D%22M72%20364C112%20245%20202%20154%20327%2082C357%2065%20396%2088%20396%20123V361C396%20396%20357%20419%20327%20402C257%20360%20177%20348%2072%20364Z%22%20fill%3D%22%237C3AED%22/%3E%20%3Cpath%20d%3D%22M360%20126C404%20154%20440%20198%20462%20256C440%20316%20404%20360%20360%20386V126Z%22%20fill%3D%22%2322D3EE%22/%3E%20%3Cpath%20d%3D%22M156%20128H220V324H364V388H156V128Z%22%20fill%3D%22white%22/%3E%20%3Cpath%20d%3D%22M252%20176L360%20256L252%20336V176Z%22%20fill%3D%22white%22%20fill-opacity%3D%220.88%22/%3E%20%3C/svg%3E">
 <style>
   :root{--bg:#f7f7fa;--fg:#111114;--muted:#6b6b76;--line:#e4e4ea;--field:#eeeef3;--btn:#111114;--btnfg:#fff;--acc:#7c6cff;--err:#c0263d;--errbg:#fdecef;--note:#f0f0f5;--ok:#15803d}
   @media (prefers-color-scheme: dark){:root{--bg:#0f0d17;--fg:#f3f2f8;--muted:#a09db0;--line:#2a2738;--field:#1b1826;--btn:#f3f2f8;--btnfg:#0f0d17;--err:#ff7a8f;--errbg:#2a1520;--note:#1b1826;--ok:#4ade80}}
@@ -12,9 +13,8 @@
   body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
   header{position:sticky;top:0;padding:12px 16px;z-index:1}
   .bar{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;background:#1c1a24;color:#fff;border-radius:999px;padding:12px 20px;box-shadow:0 6px 20px #0003}
-  .logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#8b7bff,#5b8cff);display:grid;place-items:center}
-  .logo i{width:12px;height:12px;border-radius:3px;background:#fff;display:block}
-  .bar b{font-size:20px;letter-spacing:.5px}
+  .logo{width:28px;height:28px;display:block}
+    .bar b{font-size:20px;letter-spacing:.5px}
   main{max-width:520px;margin:0 auto;padding:40px 24px 48px}
   h1{font-size:34px;line-height:1.15;margin:0 0 10px;letter-spacing:-.5px}
   h2{font-size:24px;margin:24px 0 6px}
@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-<header><div class="bar"><span class="logo"><i></i></span><b>Luma</b></div></header>
+<header><div class="bar"><svg class="logo" width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="512" height="512" rx="96" fill="#080910"/> <path d="M72 364C112 245 202 154 327 82C357 65 396 88 396 123V361C396 396 357 419 327 402C257 360 177 348 72 364Z" fill="#7C3AED"/> <path d="M360 126C404 154 440 198 462 256C440 316 404 360 360 386V126Z" fill="#22D3EE"/> <path d="M156 128H220V324H364V388H156V128Z" fill="white"/> <path d="M252 176L360 256L252 336V176Z" fill="white" fill-opacity="0.88"/> </svg><b>Luma</b></div></header>
 <main>
   <!-- 1) Enter code -->
   <section id="v-enter" class="hidden">
