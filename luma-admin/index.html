@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Luma · لوحة التحكم</title>
+<link rel="stylesheet" href="./styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js" defer></script>
+<script src="./app.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="logo" aria-hidden="true"><i></i></span>
+    <b>Luma Admin</b>
+    <span class="spacer"></span>
+    <button class="link hidden" id="b-logout" type="button">خروج</button>
+  </div>
+</header>
+
+<main>
+  <section id="v-login" class="hidden">
+    <h1>لوحة التحكم</h1>
+    <p>سجّل الدخول بحساب Luma لإدارة قيود الإضافات والمزامنة.</p>
+    <label for="li-email">البريد الإلكتروني</label>
+    <input id="li-email" type="email" autocomplete="email" placeholder="you@example.com">
+    <label for="li-pass">كلمة المرور</label>
+    <input id="li-pass" type="password" autocomplete="current-password">
+    <button class="btn" id="b-login" type="button">تسجيل الدخول</button>
+    <div id="login-err" class="err hidden"></div>
+  </section>
+
+  <section id="v-dash" class="hidden">
+    <h1>لوحة التحكم</h1>
+    <p id="dash-user" class="small"></p>
+
+    <div class="stats">
+      <div class="stat"><span class="muted">الملف</span><strong id="stat-profile">1</strong></div>
+      <div class="stat"><span class="muted">الإضافات</span><strong id="stat-addons">—</strong></div>
+      <div class="stat"><span class="muted">القيود</span><strong id="stat-locks">—</strong></div>
+      <div class="stat"><span class="muted">قيود جلسة أخرى</span><strong id="stat-foreign">—</strong></div>
+    </div>
+
+    <div class="toolbar">
+      <label class="inline">الملف الشخصي
+        <input id="profile-id" type="number" min="1" value="1">
+      </label>
+      <button class="btn sec" id="b-refresh" type="button">تحديث</button>
+      <button class="btn danger" id="b-clear-locks" type="button">مسح كل القيود</button>
+    </div>
+
+    <div id="dash-msg" class="note hidden"></div>
+    <div id="dash-err" class="err hidden"></div>
+
+    <h2>القيود</h2>
+    <p class="small">صفوف <span class="mono">addon_access_rules</span> لهذا الحساب.</p>
+    <div id="locks-list" class="list"></div>
+
+    <h2>الإضافات</h2>
+    <div id="addons-list" class="list"></div>
+  </section>
+</main>
+</body>
+</html>
