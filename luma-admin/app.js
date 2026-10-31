@@ -19,6 +19,148 @@
     }
   }
 
+  function md5Fallback(str) {
+    // Compact MD5 for addon URL hashing (same canonical form as Luma).
+    function cmn(q, a, b, x, s, t) {
+      a = (a + q + x + t) | 0;
+      return (((a << s) | (a >>> (32 - s))) + b) | 0;
+    }
+    function ff(a, b, c, d, x, s, t) { return cmn((b & c) | (~b & d), a, b, x, s, t); }
+    function gg(a, b, c, d, x, s, t) { return cmn((b & d) | (c & ~d), a, b, x, s, t); }
+    function hh(a, b, c, d, x, s, t) { return cmn(b ^ c ^ d, a, b, x, s, t); }
+    function ii(a, b, c, d, x, s, t) { return cmn(c ^ (b | ~d), a, b, x, s, t); }
+    function md51(s) {
+      const n = s.length;
+      const state = [1732584193, -271733879, -1732584194, 271733878];
+      let i;
+      for (i = 64; i <= n; i += 64) md5cycle(state, md5blk(s.substring(i - 64, i)));
+      s = s.substring(i - 64);
+      const tail = Array(16).fill(0);
+      for (i = 0; i < s.length; i++) tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) * 8);
+      tail[i >> 2] |= 0x80 << ((i % 4) * 8);
+      if (i > 55) {
+        md5cycle(state, tail);
+        for (let j = 0; j < 16; j++) tail[j] = 0;
+      }
+      tail[14] = n * 8;
+      md5cycle(state, tail);
+      return state;
+    }
+    function md5blk(s) {
+      const md5blks = [];
+      for (let i = 0; i < 64; i += 4) {
+        md5blks[i >> 2] =
+          s.charCodeAt(i) +
+          (s.charCodeAt(i + 1) << 8) +
+          (s.charCodeAt(i + 2) << 16) +
+          (s.charCodeAt(i + 3) << 24);
+      }
+      return md5blks;
+    }
+    function md5cycle(x, k) {
+      let [a, b, c, d] = x;
+      a = ff(a, b, c, d, k[0], 7, -680876936);
+      d = ff(d, a, b, c, k[1], 12, -389564586);
+      c = ff(c, d, a, b, k[2], 17, 606105819);
+      b = ff(b, c, d, a, k[3], 22, -1044525330);
+      a = ff(a, b, c, d, k[4], 7, -176418897);
+      d = ff(d, a, b, c, k[5], 12, 1200080426);
+      c = ff(c, d, a, b, k[6], 17, -1473231341);
+      b = ff(b, c, d, a, k[7], 22, -45705983);
+      a = ff(a, b, c, d, k[8], 7, 1770035416);
+      d = ff(d, a, b, c, k[9], 12, -1958414417);
+      c = ff(c, d, a, b, k[10], 17, -42063);
+      b = ff(b, c, d, a, k[11], 22, -1990404162);
+      a = ff(a, b, c, d, k[12], 7, 1804603682);
+      d = ff(d, a, b, c, k[13], 12, -40341101);
+      c = ff(c, d, a, b, k[14], 17, -1502002290);
+      b = ff(b, c, d, a, k[15], 22, 1236535329);
+      a = gg(a, b, c, d, k[1], 5, -165796510);
+      d = gg(d, a, b, c, k[6], 9, -1069501632);
+      c = gg(c, d, a, b, k[11], 14, 643717713);
+      b = gg(b, c, d, a, k[0], 20, -373897302);
+      a = gg(a, b, c, d, k[5], 5, -701558691);
+      d = gg(d, a, b, c, k[10], 9, 38016083);
+      c = gg(c, d, a, b, k[15], 14, -660478335);
+      b = gg(b, c, d, a, k[4], 20, -405537848);
+      a = gg(a, b, c, d, k[9], 5, 568446438);
+      d = gg(d, a, b, c, k[14], 9, -1019803690);
+      c = gg(c, d, a, b, k[3], 14, -187363961);
+      b = gg(b, c, d, a, k[8], 20, 1163531501);
+      a = gg(a, b, c, d, k[13], 5, -1444681467);
+      d = gg(d, a, b, c, k[2], 9, -51403784);
+      c = gg(c, d, a, b, k[7], 14, 1735328473);
+      b = gg(b, c, d, a, k[12], 20, -1926607734);
+      a = hh(a, b, c, d, k[5], 4, -378558);
+      d = hh(d, a, b, c, k[8], 11, -2022574463);
+      c = hh(c, d, a, b, k[11], 16, 1839030562);
+      b = hh(b, c, d, a, k[14], 23, -35309556);
+      a = hh(a, b, c, d, k[1], 4, -1530992060);
+      d = hh(d, a, b, c, k[4], 11, 1272893353);
+      c = hh(c, d, a, b, k[7], 16, -155497632);
+      b = hh(b, c, d, a, k[10], 23, -1094730640);
+      a = hh(a, b, c, d, k[13], 4, 681279174);
+      d = hh(d, a, b, c, k[0], 11, -358537222);
+      c = hh(c, d, a, b, k[3], 16, -722521979);
+      b = hh(b, c, d, a, k[6], 23, 76029189);
+      a = hh(a, b, c, d, k[9], 4, -640364487);
+      d = hh(d, a, b, c, k[12], 11, -421815835);
+      c = hh(c, d, a, b, k[15], 16, 530742520);
+      b = hh(b, c, d, a, k[2], 23, -995338651);
+      a = ii(a, b, c, d, k[0], 6, -198630844);
+      d = ii(d, a, b, c, k[7], 10, 1126891415);
+      c = ii(c, d, a, b, k[14], 15, -1416354905);
+      b = ii(b, c, d, a, k[5], 21, -57434055);
+      a = ii(a, b, c, d, k[12], 6, 1700485571);
+      d = ii(d, a, b, c, k[3], 10, -1894986606);
+      c = ii(c, d, a, b, k[10], 15, -1051523);
+      b = ii(b, c, d, a, k[1], 21, -2054922799);
+      a = ii(a, b, c, d, k[8], 6, 1873313359);
+      d = ii(d, a, b, c, k[15], 10, -30611744);
+      c = ii(c, d, a, b, k[6], 15, -1560198380);
+      b = ii(b, c, d, a, k[13], 21, 1309151649);
+      a = ii(a, b, c, d, k[4], 6, -145523070);
+      d = ii(d, a, b, c, k[11], 10, -1120210379);
+      c = ii(c, d, a, b, k[2], 15, 718787259);
+      b = ii(b, c, d, a, k[9], 21, -343485551);
+      x[0] = (a + x[0]) | 0;
+      x[1] = (b + x[1]) | 0;
+      x[2] = (c + x[2]) | 0;
+      x[3] = (d + x[3]) | 0;
+    }
+    function rhex(n) {
+      let s = "";
+      for (let j = 0; j < 4; j++) s += ((n >> (j * 8)) & 255).toString(16).padStart(2, "0");
+      return s;
+    }
+    return md51(unescape(encodeURIComponent(str))).map(rhex).join("");
+  }
+
+  function canonicalizeAddonUrl(url) {
+    let u = String(url || "").trim();
+    let q = "";
+    const qi = u.indexOf("?");
+    if (qi >= 0) {
+      q = u.slice(qi);
+      u = u.slice(0, qi);
+    }
+    u = u.replace(/\/+$/, "");
+    if (/\/manifest\.json$/i.test(u)) u = u.replace(/\/manifest\.json$/i, "");
+    return u + q;
+  }
+
+  function addonUrlHash(url) {
+    return md5Fallback(canonicalizeAddonUrl(url));
+  }
+
+  function buildHashNames(addons) {
+    const map = new Map();
+    for (const a of addons || []) {
+      map.set(addonUrlHash(a.url), a.name || shortUrl(a.url));
+    }
+    return map;
+  }
+
   function setMsg(text, isErr) {
     const note = $("dash-msg");
     const err = $("dash-err");
@@ -114,7 +256,7 @@
     return new Set(data || []);
   }
 
-  function renderLocks(locks) {
+  function renderLocks(locks, hashNames) {
     const root = $("locks-list");
     if (!locks.length) {
       root.innerHTML = '<div class="empty">لا توجد قيود حاليًا.</div>';
@@ -125,13 +267,19 @@
         const foreign = row.is_foreign_session
           ? '<span class="chip warn">جلسة أخرى</span>'
           : '<span class="chip">هذه الجلسة</span>';
+        const label = hashNames.get(row.url_hash) || "إضافة غير معروفة في القائمة";
         return `<article class="card">
-          <div class="title mono">${row.url_hash}</div>
+          <div class="title">${escapeHtml(label)}</div>
+          <div class="url mono">${escapeHtml(row.url_hash)}</div>
           <div class="small">ملف ${row.profile_id}</div>
           <div class="chips">${foreign}</div>
+          <button class="btn sec" type="button" data-unlock-hash="${escapeHtml(row.url_hash)}">فك القيد مؤقتًا</button>
         </article>`;
       })
       .join("");
+    root.querySelectorAll("[data-unlock-hash]").forEach((btn) => {
+      btn.addEventListener("click", () => unlockOne(btn.getAttribute("data-unlock-hash")));
+    });
   }
 
   function renderAddons(addons, hidden) {
@@ -181,11 +329,29 @@
       $("stat-foreign").textContent = String(
         locks.filter((r) => r.is_foreign_session).length
       );
-      renderLocks(locks);
+      const hashNames = buildHashNames(addons);
+      renderLocks(locks, hashNames);
       renderAddons(addons, hidden);
       if (hidden.size) {
         setMsg(`هذه الجلسة ترى ${hidden.size} إضافة مخفية من جهاز/جلسة أخرى.`, false);
       }
+    } catch (e) {
+      setMsg(e.message || String(e), true);
+    }
+  }
+
+  async function unlockOne(urlHash) {
+    if (!urlHash) return;
+    if (!confirm("فك هذا القيد مؤقتًا؟ يمكن إعادته لاحقًا من Luma عبر «إخفاء ومنع بالأجهزة الأخرى».")) return;
+    setMsg("", false);
+    try {
+      const { data, error } = await sb.rpc("clear_own_addon_access_rule_by_hash", {
+        p_url_hash: urlHash,
+        p_profile_id: profileId(),
+      });
+      if (error) throw error;
+      setMsg(data ? "تم فك القيد مؤقتًا." : "ما لقيت قيد بهالهاش.", false);
+      await refreshDash();
     } catch (e) {
       setMsg(e.message || String(e), true);
     }

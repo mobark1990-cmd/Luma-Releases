@@ -14,9 +14,11 @@ python3 -m http.server 8765 --directory /home/mubarak/Projects/Luma-Linux/admin-
 
 ## النشر
 
-يُنسخ محتوى هذا المجلد إلى `luma-admin/` داخل مستودع GitHub Pages:
+يُنسخ محتوى هذا المجلد إلى فرع `gh-pages` تحت المسار `luma-admin/` في مستودع `Luma-Releases`:
 
 `https://mobark1990-cmd.github.io/Luma-Releases/luma-admin/`
+
+ملاحظة: صفحات GitHub لهذا المستودع تُبنى من فرع `gh-pages` وليس `main`.
 
 ## الصلاحيات
 
