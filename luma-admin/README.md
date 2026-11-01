@@ -12,6 +12,10 @@ python3 -m http.server 8765 --directory /home/mubarak/Projects/Luma-Linux/admin-
 
 ثم افتح `http://127.0.0.1:8765/`.
 
+## ما يُنشر وما لا يُنشر
+
+يُنشر: `index.html` و`app.js` و`styles.css` و`vendor/`. **لا يُنشر** `verify_rpc.py` (يقرأ جلسة Luma من جهازك). مكتبة Supabase محفوظة محلياً في `vendor/` (النسخة 2.49.1) بدل تحميلها من CDN، والصفحة مقيّدة بسياسة CSP تسمح بالاتصال بخادم Supabase فقط.
+
 ## النشر
 
 يُنسخ محتوى هذا المجلد إلى فرع `gh-pages` تحت المسار `luma-admin/` في مستودع `Luma-Releases`:

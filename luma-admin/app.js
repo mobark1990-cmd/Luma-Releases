@@ -359,7 +359,7 @@
 
   async function clearLocks() {
     const pid = profileId();
-    if (!confirm(`مسح كل قيود الإضافات للملف ${pid}؟`)) return;
+    if (!confirm(`تحذير: هذه القيود هي التي تخفي إضافاتك الخاصة (مثل إضافات البالغين) عن بقية الأجهزة، كالتلفزيون. مسحها يكشف هذه الإضافات على كل جهاز يزامن حسابك.\n\nمسح كل القيود للملف ${pid}؟`)) return;
     setMsg("", false);
     try {
       const { data, error } = await sb.rpc("clear_own_addon_access_rules", {
