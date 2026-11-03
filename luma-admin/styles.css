@@ -1,46 +1,50 @@
 :root {
-  --bg: #f4f2ef;
+  --bg: #ffffff;
   --fg: #17140f;
-  --muted: #6d675c;
-  --line: #ddd6cb;
-  --field: #ebe6df;
-  --btn: #1d4f3a;
-  --btnfg: #f7f4ee;
+  --muted: #6b6b6b;
+  --line: #e4e4e4;
+  --field: #f3f3f3;
+  --btn: #9a6b1c;
+  --btnfg: #fff8e8;
   --sec: transparent;
   --danger: #8b2e2e;
   --dangerfg: #fff7f5;
-  --note: #e8efe9;
+  --note: #f7f1e3;
   --err: #8b2e2e;
   --errbg: #f8e8e6;
-  --card: #fffdf9;
-  --chip: #d7ece0;
+  --card: #ffffff;
+  --chip: #f4ead2;
   --chip-warn: #f3e0c8;
+  --glow1: transparent;
+  --glow2: transparent;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12140f;
+    --bg: #0f0d0a;
     --fg: #f2eee6;
     --muted: #a39b8c;
-    --line: #2c3228;
-    --field: #1c211a;
-    --btn: #6fbf94;
-    --btnfg: #0f1511;
+    --line: #33291c;
+    --field: #1d1812;
+    --btn: #f1d18b;
+    --btnfg: #241c10;
     --danger: #d97a6c;
     --dangerfg: #1a0f0d;
-    --note: #1d2a22;
+    --note: #261e12;
     --err: #f0a090;
     --errbg: #2a1714;
-    --card: #181c16;
-    --chip: #24352b;
+    --card: #1a1510;
+    --chip: #33281a;
     --chip-warn: #3a2f1d;
+    --glow1: #f1d18b1c;
+    --glow2: #f1d18b10;
   }
 }
 * { box-sizing: border-box; }
 body {
   margin: 0;
   background:
-    radial-gradient(1200px 500px at 10% -10%, #c8e2d233, transparent),
-    radial-gradient(900px 400px at 100% 0%, #e7d5b733, transparent),
+    radial-gradient(1200px 500px at 10% -10%, var(--glow1), transparent),
+    radial-gradient(900px 400px at 100% 0%, var(--glow2), transparent),
     var(--bg);
   color: var(--fg);
   font: 16px/1.55 "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
@@ -52,15 +56,15 @@ header { position: sticky; top: 0; padding: 12px 16px; z-index: 2; }
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #15241c;
-  color: #f4f7f4;
+  background: #241a0e;
+  color: #f6f1e7;
   border-radius: 999px;
   padding: 12px 18px;
   box-shadow: 0 10px 28px #0003;
 }
 .logo {
   width: 28px; height: 28px; border-radius: 8px;
-  background: linear-gradient(135deg, #7dba93, #2f6b4f);
+  background: linear-gradient(135deg, #f1d18b, #b8862b);
   display: grid; place-items: center;
 }
 .logo i { width: 12px; height: 12px; border-radius: 3px; background: #fff; display: block; }
