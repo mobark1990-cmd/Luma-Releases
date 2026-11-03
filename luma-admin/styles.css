@@ -1,3 +1,8 @@
+@font-face { font-family: "Tajawal"; font-weight: 400; font-style: normal; font-display: swap; src: url("./fonts/tajawal-regular.ttf") format("truetype"); }
+@font-face { font-family: "Tajawal"; font-weight: 500; font-style: normal; font-display: swap; src: url("./fonts/tajawal-medium.ttf") format("truetype"); }
+@font-face { font-family: "Tajawal"; font-weight: 700; font-style: normal; font-display: swap; src: url("./fonts/tajawal-bold.ttf") format("truetype"); }
+@font-face { font-family: "Tajawal"; font-weight: 800; font-style: normal; font-display: swap; src: url("./fonts/tajawal-extrabold.ttf") format("truetype"); }
+
 /* Luma Admin. Day = white. Night = warm brown-black. Gold is the brand and is used in few places:
    the mark, the primary button, focus. State uses its own colours (green / amber / red), never gold. */
 :root {
@@ -21,7 +26,7 @@
   --shadow: 0 1px 2px rgba(26, 23, 18, 0.05), 0 12px 32px rgba(26, 23, 18, 0.06);
   --ring: rgba(217, 164, 65, 0.45);
   --glow: transparent;
-  --font: "Segoe UI", "Noto Sans Arabic", "Noto Kufi Arabic", system-ui, -apple-system, Tahoma, sans-serif;
+  --font: "Tajawal", "Segoe UI", "Noto Sans Arabic", system-ui, -apple-system, Tahoma, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
 }
 :root[data-theme="dark"] {
@@ -80,7 +85,7 @@ body {
     radial-gradient(900px 380px at 12% -8%, var(--glow), transparent 70%),
     var(--bg);
   color: var(--ink);
-  font: 16px/1.6 var(--font);
+  font: 17px/1.6 var(--font);
   font-variant-numeric: tabular-nums;
 }
 main { width: 100%; max-width: 960px; margin: 0 auto; padding: 18px 20px 40px; flex: 1; }
