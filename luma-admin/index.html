@@ -4,64 +4,142 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" id="meta-theme-color">
 <title>Luma · لوحة التحكم</title>
 <link rel="stylesheet" href="./styles.css">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https://hcjbnmheonbfllkdhrph.supabase.co; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
+<script src="./theme.js"></script>
 <script src="./vendor/supabase.min.js" defer></script>
 <script src="./app.js" defer></script>
 </head>
 <body>
-<header>
+<header class="topbar">
   <div class="bar">
-    <span class="logo" aria-hidden="true"><i></i></span>
-    <b>Luma Admin</b>
+    <a class="brand" href="./" aria-label="Luma Admin">
+      <svg class="mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="4" y1="3" x2="28" y2="29" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f6dc9d"/><stop offset="1" stop-color="#c8923a"/></linearGradient></defs>
+        <path d="M20.5 3.2A12.8 12.8 0 1 0 28.8 22 10.4 10.4 0 0 1 20.5 3.2z" fill="url(#lg)"/>
+        <path d="M12.6 11.4v9.2l7.4-4.6z" fill="#fffaf0"/>
+      </svg>
+      <b>Luma</b><span class="tag">Admin</span>
+    </a>
     <span class="spacer"></span>
+    <div class="seg" role="radiogroup" aria-label="المظهر" id="theme-seg">
+      <button type="button" role="radio" aria-checked="true" data-theme-choice="system" title="تلقائي (حسب النظام)" aria-label="تلقائي حسب النظام">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+      </button>
+      <button type="button" role="radio" aria-checked="false" data-theme-choice="light" title="نهاري" aria-label="الوضع النهاري">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button type="button" role="radio" aria-checked="false" data-theme-choice="dark" title="ليلي" aria-label="الوضع الليلي">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
     <button class="link hidden" id="b-logout" type="button">خروج</button>
   </div>
 </header>
 
 <main>
   <section id="v-login" class="hidden">
-    <h1>لوحة التحكم</h1>
-    <p>سجّل الدخول بحساب Luma لإدارة قيود الإضافات والمزامنة.</p>
-    <label for="li-email">البريد الإلكتروني</label>
-    <input id="li-email" type="email" autocomplete="email" placeholder="you@example.com">
-    <label for="li-pass">كلمة المرور</label>
-    <input id="li-pass" type="password" autocomplete="current-password">
-    <button class="btn" id="b-login" type="button">تسجيل الدخول</button>
-    <div id="login-err" class="err hidden"></div>
+    <div class="login">
+      <svg class="mark big" viewBox="0 0 32 32" width="56" height="56" aria-hidden="true">
+        <path d="M20.5 3.2A12.8 12.8 0 1 0 28.8 22 10.4 10.4 0 0 1 20.5 3.2z" fill="url(#lg)"/>
+        <path d="M12.6 11.4v9.2l7.4-4.6z" fill="#fffaf0"/>
+      </svg>
+      <h1>لوحة التحكم</h1>
+      <p class="lede">سجّل الدخول بحساب Luma لإدارة قيود الإضافات ومتابعة ما تراه أجهزتك.</p>
+      <div class="field">
+        <label for="li-email">البريد الإلكتروني</label>
+        <input id="li-email" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="li-pass">كلمة المرور</label>
+        <input id="li-pass" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn block" id="b-login" type="button">تسجيل الدخول</button>
+      <div id="login-err" class="banner err hidden" role="alert"></div>
+    </div>
   </section>
 
   <section id="v-dash" class="hidden">
-    <h1>لوحة التحكم</h1>
-    <p id="dash-user" class="small"></p>
-
-    <div class="stats">
-      <div class="stat"><span class="muted">الملف</span><strong id="stat-profile">1</strong></div>
-      <div class="stat"><span class="muted">الإضافات</span><strong id="stat-addons">—</strong></div>
-      <div class="stat"><span class="muted">القيود</span><strong id="stat-locks">—</strong></div>
-      <div class="stat"><span class="muted">قيود جلسة أخرى</span><strong id="stat-foreign">—</strong></div>
+    <div class="page-head">
+      <div class="titles">
+        <h1>لوحة التحكم</h1>
+        <p id="dash-user" class="who"></p>
+      </div>
+      <div class="actions">
+        <div class="stepper">
+          <button type="button" id="b-prof-dec" aria-label="الملف السابق">−</button>
+          <label for="profile-id">الملف الشخصي</label>
+          <input id="profile-id" type="number" min="1" value="1" inputmode="numeric">
+          <button type="button" id="b-prof-inc" aria-label="الملف التالي">+</button>
+        </div>
+        <button class="btn sec" id="b-refresh" type="button">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>
+          تحديث
+        </button>
+      </div>
     </div>
 
-    <div class="toolbar">
-      <label class="inline">الملف الشخصي
-        <input id="profile-id" type="number" min="1" value="1">
-      </label>
-      <button class="btn sec" id="b-refresh" type="button">تحديث</button>
-      <button class="btn danger" id="b-clear-locks" type="button">مسح كل القيود</button>
+    <div class="statusbar" role="group" aria-label="ملخص الحساب">
+      <div class="stat">
+        <span class="stat-label">الملف</span>
+        <strong id="stat-profile">1</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">الإضافات</span>
+        <strong id="stat-addons">—</strong>
+      </div>
+      <div class="stat">
+        <span class="stat-label">القيود</span>
+        <strong id="stat-locks">—</strong>
+        <span class="pill hidden" id="locks-state"></span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">قيود جلسة أخرى</span>
+        <strong id="stat-foreign">—</strong>
+        <span class="pill hidden" id="foreign-state"></span>
+      </div>
     </div>
+    <p class="updated" id="dash-updated"></p>
 
-    <div id="dash-msg" class="note hidden"></div>
-    <div id="dash-err" class="err hidden"></div>
+    <div id="dash-msg" class="banner note hidden" role="status"></div>
+    <div id="dash-err" class="banner err hidden" role="alert"></div>
 
-    <h2>القيود</h2>
-    <p class="small">صفوف <span class="mono">addon_access_rules</span> لهذا الحساب.</p>
-    <div id="locks-list" class="list"></div>
+    <section class="block">
+      <div class="block-head">
+        <h2>القيود <span class="count" id="locks-count"></span></h2>
+        <button class="btn danger sm" id="b-clear-locks" type="button">مسح كل القيود</button>
+      </div>
+      <p class="desc">القيود هي ما يخفي إضافاتك الخاصة عن بقية الأجهزة. صفوف <span class="mono">addon_access_rules</span> لهذا الحساب.</p>
+      <div id="locks-list" class="rows" aria-live="polite">
+        <div class="row sk"><span class="sk-dot"></span><span class="sk-line"></span></div>
+        <div class="row sk"><span class="sk-dot"></span><span class="sk-line short"></span></div>
+      </div>
+    </section>
 
-    <h2>الإضافات</h2>
-    <div id="addons-list" class="list"></div>
+    <section class="block">
+      <div class="block-head">
+        <h2>الإضافات <span class="count" id="addons-count"></span></h2>
+      </div>
+      <div class="tools">
+        <input id="addons-filter" class="search" type="search" placeholder="ابحث باسم الإضافة أو عنوانها" autocomplete="off" aria-label="بحث في الإضافات">
+        <div class="seg flat" role="radiogroup" aria-label="تصفية الحالة" id="status-seg">
+          <button type="button" role="radio" aria-checked="true" data-status="all">الكل</button>
+          <button type="button" role="radio" aria-checked="false" data-status="on">مفعّلة</button>
+          <button type="button" role="radio" aria-checked="false" data-status="off">متوقفة</button>
+        </div>
+      </div>
+      <div id="addons-list" class="rows" aria-live="polite">
+        <div class="row sk"><span class="sk-dot"></span><span class="sk-line"></span></div>
+        <div class="row sk"><span class="sk-dot"></span><span class="sk-line short"></span></div>
+        <div class="row sk"><span class="sk-dot"></span><span class="sk-line"></span></div>
+      </div>
+    </section>
   </section>
 </main>
+
+<footer class="foot">Luma Admin · يعمل بحساب Luma عبر Supabase</footer>
 </body>
 </html>

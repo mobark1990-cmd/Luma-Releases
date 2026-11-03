@@ -256,24 +256,39 @@
     return new Set(data || []);
   }
 
+  const LOCK_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  const OK_ICON = '<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>';
+
+  function shortHash(h) {
+    const s = String(h || "");
+    return s.length > 18 ? s.slice(0, 8) + "…" + s.slice(-6) : s;
+  }
+
   function renderLocks(locks, hashNames) {
     const root = $("locks-list");
+    $("locks-count").textContent = locks.length ? String(locks.length) : "";
     if (!locks.length) {
-      root.innerHTML = '<div class="empty">لا توجد قيود حاليًا.</div>';
+      root.innerHTML = `<div class="empty">${OK_ICON}<strong>لا توجد قيود</strong><span>كل إضافاتك ظاهرة على أجهزتك.</span></div>`;
       return;
     }
     root.innerHTML = locks
       .map((row) => {
-        const foreign = row.is_foreign_session
-          ? '<span class="chip warn">جلسة أخرى</span>'
-          : '<span class="chip">هذه الجلسة</span>';
+        const foreign = !!row.is_foreign_session;
+        const pill = foreign
+          ? '<span class="pill warn">جلسة أخرى</span>'
+          : '<span class="pill ok">هذه الجلسة</span>';
         const label = hashNames.get(row.url_hash) || "إضافة غير معروفة في القائمة";
-        return `<article class="card">
-          <div class="title">${escapeHtml(label)}</div>
-          <div class="url mono">${escapeHtml(row.url_hash)}</div>
-          <div class="small">ملف ${row.profile_id}</div>
-          <div class="chips">${foreign}</div>
-          <button class="btn sec" type="button" data-unlock-hash="${escapeHtml(row.url_hash)}">فك القيد مؤقتًا</button>
+        return `<article class="row">
+          <span class="row-icon ${foreign ? "warn" : ""}">${LOCK_ICON}</span>
+          <div class="row-main">
+            <div class="row-title">${escapeHtml(label)}</div>
+            <div class="row-sub"><span class="mono" title="${escapeHtml(row.url_hash)}">${escapeHtml(shortHash(row.url_hash))}</span>
+              <button class="copy" type="button" data-copy="${escapeHtml(row.url_hash)}">نسخ</button>
+              <span>· ملف ${escapeHtml(row.profile_id)}</span></div>
+          </div>
+          <div class="row-side">${pill}
+            <button class="btn sec sm" type="button" data-unlock-hash="${escapeHtml(row.url_hash)}">فك القيد مؤقتًا</button>
+          </div>
         </article>`;
       })
       .join("");
@@ -282,28 +297,51 @@
     });
   }
 
+  let addonsAll = [];
+  let addonsStatus = "all";
+
   function renderAddons(addons, hidden) {
+    addonsAll = addons || [];
+    void hidden;
+    paintAddons();
+  }
+
+  function paintAddons() {
     const root = $("addons-list");
-    if (!addons.length) {
-      root.innerHTML = '<div class="empty">لا توجد إضافات مزامَنة لهذا الملف.</div>';
+    const q = ($("addons-filter").value || "").trim().toLowerCase();
+    const filtered = addonsAll.filter((a) => {
+      const enabled = a.enabled !== false;
+      if (addonsStatus === "on" && !enabled) return false;
+      if (addonsStatus === "off" && enabled) return false;
+      if (!q) return true;
+      return String(a.name || "").toLowerCase().includes(q) || String(a.url || "").toLowerCase().includes(q);
+    });
+    const total = addonsAll.length;
+    $("addons-count").textContent = !total ? "" : filtered.length === total ? String(total) : `${filtered.length} من ${total}`;
+    if (!total) {
+      root.innerHTML = '<div class="empty"><strong>لا توجد إضافات مزامَنة</strong><span>أضف إضافات من Luma وستظهر هنا لهذا الملف.</span></div>';
       return;
     }
-    root.innerHTML = addons
+    if (!filtered.length) {
+      root.innerHTML = '<div class="empty"><strong>ما فيه نتائج</strong><span>جرّب كلمة ثانية أو غيّر التصفية.</span></div>';
+      return;
+    }
+    root.innerHTML = filtered
       .map((a) => {
-        // Local hash check is approximate for display of "مخفية هنا" via get_hidden list size only.
         const enabled = a.enabled !== false;
-        const chips = [
-          enabled ? '<span class="chip">مفعّلة</span>' : '<span class="chip warn">متوقفة</span>',
-        ].join("");
         const name = a.name || shortUrl(a.url);
-        return `<article class="card">
-          <div class="title">${escapeHtml(name)}</div>
-          <div class="url">${escapeHtml(shortUrl(a.url))}</div>
-          <div class="chips">${chips}</div>
+        const initial = String(name).trim().charAt(0).toUpperCase() || "؟";
+        const pill = enabled ? '<span class="pill ok">مفعّلة</span>' : '<span class="pill">متوقفة</span>';
+        return `<article class="row">
+          <span class="row-icon ${enabled ? "" : "off"}">${escapeHtml(initial)}</span>
+          <div class="row-main">
+            <div class="row-title">${escapeHtml(name)}</div>
+            <div class="row-sub"><span class="mono">${escapeHtml(shortUrl(a.url))}</span></div>
+          </div>
+          <div class="row-side">${pill}</div>
         </article>`;
       })
       .join("");
-    void hidden;
   }
 
   function escapeHtml(s) {
@@ -314,10 +352,18 @@
       .replaceAll('"', "&quot;");
   }
 
+  function setPill(el, kind, text) {
+    el.className = "pill " + kind;
+    el.textContent = text;
+  }
+
   async function refreshDash() {
     setMsg("", false);
     const pid = profileId();
     $("stat-profile").textContent = String(pid);
+    const refreshBtn = $("b-refresh");
+    refreshBtn.classList.add("busy");
+    refreshBtn.disabled = true;
     try {
       const [addons, locks, hidden] = await Promise.all([
         loadAddons(pid),
@@ -326,9 +372,11 @@
       ]);
       $("stat-addons").textContent = String(addons.length);
       $("stat-locks").textContent = String(locks.length);
-      $("stat-foreign").textContent = String(
-        locks.filter((r) => r.is_foreign_session).length
-      );
+      const foreignCount = locks.filter((r) => r.is_foreign_session).length;
+      $("stat-foreign").textContent = String(foreignCount);
+      setPill($("locks-state"), locks.length ? "warn" : "ok", locks.length ? "مقيّدة" : "بدون قيود");
+      setPill($("foreign-state"), foreignCount ? "warn" : "ok", foreignCount ? "تحتاج مراجعة" : "سليمة");
+      $("dash-updated").textContent = "آخر تحديث " + new Date().toLocaleTimeString("ar", { hour: "2-digit", minute: "2-digit" });
       const hashNames = buildHashNames(addons);
       renderLocks(locks, hashNames);
       renderAddons(addons, hidden);
@@ -337,6 +385,9 @@
       }
     } catch (e) {
       setMsg(e.message || String(e), true);
+    } finally {
+      refreshBtn.classList.remove("busy");
+      refreshBtn.disabled = false;
     }
   }
 
@@ -373,7 +424,83 @@
     }
   }
 
+  const THEME_KEY = "luma-admin-theme";
+
+  function themeChoice() {
+    try {
+      const v = localStorage.getItem(THEME_KEY);
+      return v === "light" || v === "dark" ? v : "system";
+    } catch {
+      return "system";
+    }
+  }
+
+  function applyTheme(choice) {
+    const root = document.documentElement;
+    if (choice === "system") root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", choice);
+    try {
+      if (choice === "system") localStorage.removeItem(THEME_KEY);
+      else localStorage.setItem(THEME_KEY, choice);
+    } catch { /* storage blocked */ }
+    document.querySelectorAll("[data-theme-choice]").forEach((b) => {
+      b.setAttribute("aria-checked", String(b.dataset.themeChoice === choice));
+    });
+    const dark = choice === "dark" || (choice === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const meta = document.getElementById("meta-theme-color");
+    if (meta) meta.setAttribute("content", dark ? "#0e0c09" : "#ffffff");
+  }
+
+  async function copyText(btn) {
+    const text = btn.getAttribute("data-copy") || "";
+    const done = () => {
+      const old = btn.textContent;
+      btn.textContent = "تم النسخ";
+      setTimeout(() => { btn.textContent = old; }, 1200);
+    };
+    try {
+      await navigator.clipboard.writeText(text);
+      done();
+    } catch {
+      const r = document.createRange();
+      r.selectNodeContents(btn.previousElementSibling || btn);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+    }
+  }
+
   function wire() {
+    applyTheme(themeChoice());
+    document.querySelectorAll("[data-theme-choice]").forEach((b) => {
+      b.addEventListener("click", () => applyTheme(b.dataset.themeChoice));
+    });
+    try {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+        if (themeChoice() === "system") applyTheme("system");
+      });
+    } catch { /* old browser */ }
+    const bump = (d) => {
+      $("profile-id").value = String(Math.max(1, profileId() + d));
+      refreshDash();
+    };
+    $("b-prof-dec").addEventListener("click", () => bump(-1));
+    $("b-prof-inc").addEventListener("click", () => bump(1));
+    $("profile-id").addEventListener("change", refreshDash);
+    $("addons-filter").addEventListener("input", paintAddons);
+    document.querySelectorAll("#status-seg [data-status]").forEach((b) => {
+      b.addEventListener("click", () => {
+        addonsStatus = b.dataset.status;
+        document.querySelectorAll("#status-seg [data-status]").forEach((x) => {
+          x.setAttribute("aria-checked", String(x === b));
+        });
+        paintAddons();
+      });
+    });
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-copy]");
+      if (btn) copyText(btn);
+    });
     $("b-login").addEventListener("click", login);
     $("b-logout").addEventListener("click", logout);
     $("b-refresh").addEventListener("click", refreshDash);
